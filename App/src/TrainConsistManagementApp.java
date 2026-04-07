@@ -1,35 +1,33 @@
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Create a LinkedHashSet to maintain order and ensure uniqueness
-        Set<String> trainFormation = new LinkedHashSet<>();
+        // 1. Create a HashMap<String, Integer>
+        // Key: Bogie Name (String), Value: Seating Capacity (Integer)
+        Map<String, Integer> bogieCapacities = new HashMap<>();
 
-        System.out.println("=== UC5: Ordered Unique Bogie Formation ===");
+        System.out.println("=== UC6: Bogie to Capacity Mapping (HashMap) ===");
 
-        // 2. Attach bogies in a specific sequence
-        trainFormation.add("Engine");
-        trainFormation.add("Sleeper");
-        trainFormation.add("Cargo");
-        trainFormation.add("Guard");
+        // 2. Use put() to map bogies to their specific capacities
+        bogieCapacities.put("Sleeper", 72);
+        bogieCapacities.put("AC Chair", 56);
+        bogieCapacities.put("First Class", 24);
+        bogieCapacities.put("General", 90);
 
-        System.out.println("Initial Formation: " + trainFormation);
+        // 3. Displaying the map structure
+        System.out.println("Bogie Data stored successfully.");
 
-        // 3. Attempt to attach a duplicate bogie (Sleeper)
-        System.out.println("\nAttempting to add duplicate: 'Sleeper'...");
-        boolean isAdded = trainFormation.add("Sleeper");
-
-        // 4. Verify if the duplicate was blocked
-        if (!isAdded) {
-            System.out.println("System Alert: Bogie 'Sleeper' is already attached. Duplicate blocked.");
+        // 4. Iterate over the map using entrySet() to display details
+        System.out.println("\n--- Train Capacity Summary ---");
+        for (Map.Entry<String, Integer> entry : bogieCapacities.entrySet()) {
+            System.out.println("Bogie Type: " + entry.getKey() + " | Capacity: " + entry.getValue() + " seats");
         }
 
-        // 5. Display the final formation order
-        System.out.println("\nFinal Train Formation (Order Preserved):");
-        System.out.println(trainFormation);
-
-        // Demonstrating the count
-        System.out.println("Total Unique Bogies in Sequence: " + trainFormation.size());
+        // 5. Fast Lookup Example
+        String searchBogie = "AC Chair";
+        if (bogieCapacities.containsKey(searchBogie)) {
+            System.out.println("\nQuick Search: " + searchBogie + " has a limit of " + bogieCapacities.get(searchBogie) + " passengers.");
+        }
     }
 }
