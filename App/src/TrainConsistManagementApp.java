@@ -1,8 +1,8 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-// 1. Create a Bogie class to model real-world attributes
+// Reusing the Bogie class from UC7
 class Bogie {
     String name;
     int capacity;
@@ -12,7 +12,6 @@ class Bogie {
         this.capacity = capacity;
     }
 
-    // Overriding toString() for clean console output
     @Override
     public String toString() {
         return name + " (" + capacity + " seats)";
@@ -21,31 +20,31 @@ class Bogie {
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 2. Create a List<Bogie> to store custom objects
-        List<Bogie> passengerBogies = new ArrayList<>();
+        // 1. Create the initial list of bogies
+        List<Bogie> allBogies = new ArrayList<>();
+        allBogies.add(new Bogie("Sleeper", 72));
+        allBogies.add(new Bogie("AC Chair", 56));
+        allBogies.add(new Bogie("First Class", 24));
+        allBogies.add(new Bogie("General", 90));
 
-        System.out.println("=== UC7: Sorting Bogies by Capacity ===");
+        System.out.println("=== UC8: Filtering High-Capacity Bogies (Streams) ===");
+        System.out.println("Full Train Consist: " + allBogies);
 
-        // 3. Add bogies with varying capacities
-        passengerBogies.add(new Bogie("Sleeper", 72));
-        passengerBogies.add(new Bogie("AC Chair", 56));
-        passengerBogies.add(new Bogie("First Class", 24));
-        passengerBogies.add(new Bogie("General", 90));
+        // 2. Use Stream API to filter bogies with capacity > 60
+        // pipeline: source -> filter -> collect
+        List<Bogie> highCapacityBogies = allBogies.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
 
-        System.out.println("Initial List: " + passengerBogies);
+        // 3. Display the filtered results
+        System.out.println("\n--- High-Capacity Bogies (> 60 seats) ---");
+        highCapacityBogies.forEach(b -> System.out.println("Match found: " + b));
 
-        // 4. Use Comparator.comparingInt() to sort by capacity (Ascending)
-        passengerBogies.sort(Comparator.comparingInt(b -> b.capacity));
+        // 4. Example of a quick check: Counting filtered results
+        long count = allBogies.stream()
+                .filter(b -> b.capacity > 60)
+                .count();
 
-        // 5. Display the sorted results
-        System.out.println("\n--- Bogies Sorted by Capacity (Smallest to Largest) ---");
-        for (Bogie b : passengerBogies) {
-            System.out.println(">> " + b);
-        }
-
-        // 6. Bonus: Sorting in Descending order for high-capacity planning
-        passengerBogies.sort(Comparator.comparingInt((Bogie b) -> b.capacity).reversed());
-        System.out.println("\n--- High-Capacity Ranking (Largest to Smallest) ---");
-        passengerBogies.forEach(b -> System.out.println("Rank: " + b));
+        System.out.println("\nTotal high-capacity coaches available: " + count);
     }
 }
