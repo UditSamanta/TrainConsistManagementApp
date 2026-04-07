@@ -1,34 +1,35 @@
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Create a LinkedList<String> for the train consist
-        LinkedList<String> trainConsist = new LinkedList<>();
+        // 1. Create a LinkedHashSet to maintain order and ensure uniqueness
+        Set<String> trainFormation = new LinkedHashSet<>();
 
-        System.out.println("=== UC4: Ordered Train Formation (LinkedList) ===");
+        System.out.println("=== UC5: Ordered Unique Bogie Formation ===");
 
-        // 2. Add initial bogies: Engine, Sleeper, AC, Cargo, Guard
-        trainConsist.add("Engine");
-        trainConsist.add("Sleeper");
-        trainConsist.add("AC");
-        trainConsist.add("Cargo");
-        trainConsist.add("Guard");
+        // 2. Attach bogies in a specific sequence
+        trainFormation.add("Engine");
+        trainFormation.add("Sleeper");
+        trainFormation.add("Cargo");
+        trainFormation.add("Guard");
 
-        System.out.println("Initial Train: " + trainConsist);
+        System.out.println("Initial Formation: " + trainFormation);
 
-        // 3. Insert 'Pantry Car' at position 2 (index 2)
-        // Note: Indexing starts at 0, so position 2 is the 3rd element
-        trainConsist.add(2, "Pantry Car");
-        System.out.println("After adding Pantry Car: " + trainConsist);
+        // 3. Attempt to attach a duplicate bogie (Sleeper)
+        System.out.println("\nAttempting to add duplicate: 'Sleeper'...");
+        boolean isAdded = trainFormation.add("Sleeper");
 
-        // 4. Remove the first and last bogie
-        String removedFirst = trainConsist.removeFirst();
-        String removedLast = trainConsist.removeLast();
+        // 4. Verify if the duplicate was blocked
+        if (!isAdded) {
+            System.out.println("System Alert: Bogie 'Sleeper' is already attached. Duplicate blocked.");
+        }
 
-        System.out.println("Removed First: " + removedFirst);
-        System.out.println("Removed Last: " + removedLast);
+        // 5. Display the final formation order
+        System.out.println("\nFinal Train Formation (Order Preserved):");
+        System.out.println(trainFormation);
 
-        // 5. Display the final ordered train consist
-        System.out.println("\nFinal Ordered Train Consist: " + trainConsist);
+        // Demonstrating the count
+        System.out.println("Total Unique Bogies in Sequence: " + trainFormation.size());
     }
 }
