@@ -1,31 +1,34 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Create a HashSet<String> for bogie IDs
-        // We use the Set interface for abstraction
-        Set<String> bogieIds = new HashSet<>();
+        // 1. Create a LinkedList<String> for the train consist
+        LinkedList<String> trainConsist = new LinkedList<>();
 
-        System.out.println("=== UC3: Unique Bogie ID Tracking ===");
+        System.out.println("=== UC4: Ordered Train Formation (LinkedList) ===");
 
-        // 2. Add IDs, including intentional duplicates
-        System.out.println("Registering bogies: BG101, BG102, BG101 (duplicate), BG103...");
+        // 2. Add initial bogies: Engine, Sleeper, AC, Cargo, Guard
+        trainConsist.add("Engine");
+        trainConsist.add("Sleeper");
+        trainConsist.add("AC");
+        trainConsist.add("Cargo");
+        trainConsist.add("Guard");
 
-        bogieIds.add("BG101");
-        bogieIds.add("BG102");
-        bogieIds.add("BG101"); // This duplicate will be automatically ignored
-        bogieIds.add("BG103");
+        System.out.println("Initial Train: " + trainConsist);
 
-        // 3. Print the final set
-        System.out.println("\nFinal Unique Bogie IDs: " + bogieIds);
+        // 3. Insert 'Pantry Car' at position 2 (index 2)
+        // Note: Indexing starts at 0, so position 2 is the 3rd element
+        trainConsist.add(2, "Pantry Car");
+        System.out.println("After adding Pantry Car: " + trainConsist);
 
-        // 4. Observe behavior
-        System.out.println("Total Unique Bogies Registered: " + bogieIds.size());
+        // 4. Remove the first and last bogie
+        String removedFirst = trainConsist.removeFirst();
+        String removedLast = trainConsist.removeLast();
 
-        // 5. Verification check
-        if (bogieIds.size() < 4) {
-            System.out.println("System Alert: Duplicate IDs were detected and blocked.");
-        }
+        System.out.println("Removed First: " + removedFirst);
+        System.out.println("Removed Last: " + removedLast);
+
+        // 5. Display the final ordered train consist
+        System.out.println("\nFinal Ordered Train Consist: " + trainConsist);
     }
 }
