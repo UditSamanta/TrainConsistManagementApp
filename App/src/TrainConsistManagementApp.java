@@ -1,22 +1,92 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+// Base Bogie Class
+abstract class Bogie {
+    private String id;
+    private String type;
+
+    public Bogie(String id, String type) {
+        this.id = id;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public abstract String getDetails();
+}
+
+// Passenger Bogie
+class PassengerBogie extends Bogie {
+    private int seatCapacity;
+
+    public PassengerBogie(String id, String type, int seatCapacity) {
+        super(id, type);
+        this.seatCapacity = seatCapacity;
+    }
+
+    @Override
+    public String getDetails() {
+        return "Passenger Bogie [ID=" + getId() +
+                ", Type=" + getType() +
+                ", Seats=" + seatCapacity + "]";
+    }
+}
+
+// Goods Bogie
+class GoodsBogie extends Bogie {
+    private String cargoType;
+
+    public GoodsBogie(String id, String type, String cargoType) {
+        super(id, type);
+        this.cargoType = cargoType;
+    }
+
+    @Override
+    public String getDetails() {
+        return "Goods Bogie [ID=" + getId() +
+                ", Type=" + getType() +
+                ", Cargo=" + cargoType + "]";
+    }
+}
+
+// Main Application
 public class TrainConsistManagementApp {
+
     public static void main(String[] args) {
-        // 1. Print a welcome message
-        System.out.println("=== Train Consist Management App ===");
 
-        // 2. Initialize an empty List using ArrayList
-        // We use the List interface for abstraction and ArrayList for the implementation
-        List<String> trainBogies = new ArrayList<>();
+        // Step 1: Create list of bogies
+        List<Bogie> bogies = new ArrayList<>();
 
-        // 3. Display the initial bogie count using size()
-        int initialCount = trainBogies.size();
+        bogies.add(new PassengerBogie("P1", "Sleeper", 72));
+        bogies.add(new PassengerBogie("P2", "AC Chair", 50));
+        bogies.add(new PassengerBogie("P3", "First Class", 30));
+        bogies.add(new PassengerBogie("P4", "Sleeper", 72));
 
-        System.out.println("Initializing train consist...");
-        System.out.println("Initial Bogie Count: " + initialCount);
+        bogies.add(new GoodsBogie("G1", "Cylindrical", "Oil"));
+        bogies.add(new GoodsBogie("G2", "Rectangular", "Coal"));
+        bogies.add(new GoodsBogie("G3", "Cylindrical", "Gas"));
 
-        // 4. Program continues (Confirmation message)
-        System.out.println("Status: System ready for bogie attachment.");
+        // Step 2: Convert list into stream and group by type
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
+
+        // Step 3: Display grouped result
+        System.out.println("=== Grouped Bogies by Type ===");
+
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println("\nType: " + entry.getKey());
+
+            for (Bogie bogie : entry.getValue()) {
+                System.out.println("  " + bogie.getDetails());
+            }
+        }
     }
 }
