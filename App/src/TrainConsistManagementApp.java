@@ -1,41 +1,48 @@
+import java.util.Arrays;
+
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. User provides a list of bogie IDs
-        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        // 1. User provides bogie IDs (may be unsorted initially)
+        String[] bogieIds = {"BG309", "BG101", "BG550", "BG205", "BG412"};
+        String searchKey = "BG412";
 
-        // 2. User provides search keys (Testing found and not found scenarios)
-        String searchKey1 = "BG309";
-        String searchKey2 = "BG999";
+        // Precondition: Binary search REQUIRES sorted data
+        Arrays.sort(bogieIds);
+        System.out.println("Sorted Bogie IDs: " + Arrays.toString(bogieIds));
 
-        System.out.println("--- Bogie ID Locator ---");
+        // Perform Binary Search
+        int resultIndex = performBinarySearch(bogieIds, searchKey);
 
-        performLinearSearch(bogieIds, searchKey1);
-        performLinearSearch(bogieIds, searchKey2);
+        // Display Result
+        if (resultIndex != -1) {
+            System.out.println("✔ Bogie ID [" + searchKey + "] found at sorted index: " + resultIndex);
+        } else {
+            System.out.println("❌ Bogie ID [" + searchKey + "] not found.");
+        }
     }
 
-    /**
-     * Performs a Linear Search to find a specific bogie ID.
-     */
-    public static void performLinearSearch(String[] ids, String target) {
-        boolean found = false;
-        int position = -1;
+    public static int performBinarySearch(String[] arr, String target) {
+        // 3. Initialize low and high indexes
+        int low = 0;
+        int high = arr.length - 1;
 
-        // 3. System traverses the array sequentially
-        for (int i = 0; i < ids.length; i++) {
-            // 4. Each element is compared with the search key
-            if (ids[i].equals(target)) {
-                found = true;
-                position = i;
-                // 5. If match found, search stops (Early Termination)
-                break;
+        while (low <= high) {
+            // 4. Find the middle index
+            int mid = low + (high - low) / 2;
+
+            // 5. Compare key with middle value using compareTo()
+            int comparison = target.compareTo(arr[mid]);
+
+            if (comparison == 0) {
+                return mid; // Found!
+            } else if (comparison > 0) {
+                // 6. Target is in the upper half
+                low = mid + 1;
+            } else {
+                // 6. Target is in the lower half
+                high = mid - 1;
             }
         }
-
-        // 6. Result is displayed
-        if (found) {
-            System.out.println("✔ Bogie ID [" + target + "] found at position: " + (position + 1));
-        } else {
-            System.out.println("❌ Bogie ID [" + target + "] NOT found in the consist.");
-        }
+        return -1; // Exhausted range, not found
     }
 }
