@@ -1,99 +1,46 @@
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
-// Base Bogie Class
-abstract class Bogie {
-    private String id;
-    private String type;
+class Bogie {
+    String type;
+    int capacity;
 
-    public Bogie(String id, String type) {
-        this.id = id;
+    public Bogie(String type, int capacity) {
         this.type = type;
+        this.capacity = capacity;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public abstract String getDetails();
-}
-
-// Passenger Bogie
-class PassengerBogie extends Bogie {
-    private int seatCapacity;
-
-    public PassengerBogie(String id, String type, int seatCapacity) {
-        super(id, type);
-        this.seatCapacity = seatCapacity;
-    }
-
-    @Override
-    public String getDetails() {
-        return "Passenger Bogie [ID=" + getId() +
-                ", Type=" + getType() +
-                ", Seats=" + seatCapacity + "]";
+    public int getCapacity() {
+        return capacity;
     }
 }
 
-// Goods Bogie
-class GoodsBogie extends Bogie {
-    private String cargoType;
 
-    public GoodsBogie(String id, String type, String cargoType) {
-        super(id, type);
-        this.cargoType = cargoType;
-    }
 
-    @Override
-    public String getDetails() {
-        return "Goods Bogie [ID=" + getId() +
-                ", Type=" + getType() +
-                ", Cargo=" + cargoType + "]";
-    }
-}
-
-// Main Application
-public class TrainConsistManagementApp {
+public class TrainConsistManagementApp{
     public static void main(String[] args) {
-        // 1. Create the initial list of bogies
-        List<Bogie> allBogies = new ArrayList<>();
-        allBogies.add(new Bogie("Sleeper", 72));
-        allBogies.add(new Bogie("AC Chair", 56));
-        allBogies.add(new Bogie("First Class", 24));
-        allBogies.add(new Bogie("General", 90));
+        // 1. User creates a list of bogies (Reuse from previous UC)
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", 72),
+                new Bogie("AC Chair Car", 56),
+                new Bogie("Sleeper", 72),
+                new Bogie("General", 90),
+                new Bogie("AC 2-Tier", 48)
+        );
 
-    public static void main(String[] args) {
+        // 2. System converts list into a stream
+        // 3. map() extracts capacity values
+        // 4. reduce() sums the capacities using 0 as identity and Integer::sum
+        int totalSeatingCapacity = bogies.stream()
+                .map(Bogie::getCapacity)
+                .reduce(0, Integer::sum);
 
-        // Step 1: Create list of bogies
-        List<Bogie> bogies = new ArrayList<>();
+        // 5. Total seating capacity is displayed
+        System.out.println("--- Train Seating Analytics ---");
+        System.out.println("Total Bogies: " + bogies.size());
+        System.out.println("Total Seating Capacity: " + totalSeatingCapacity);
+        System.out.println("-------------------------------");
 
-        bogies.add(new PassengerBogie("P1", "Sleeper", 72));
-        bogies.add(new PassengerBogie("P2", "AC Chair", 50));
-        bogies.add(new PassengerBogie("P3", "First Class", 30));
-        bogies.add(new PassengerBogie("P4", "Sleeper", 72));
-
-        bogies.add(new GoodsBogie("G1", "Cylindrical", "Oil"));
-        bogies.add(new GoodsBogie("G2", "Rectangular", "Coal"));
-        bogies.add(new GoodsBogie("G3", "Cylindrical", "Gas"));
-
-        // Step 2: Convert list into stream and group by type
-        Map<String, List<Bogie>> groupedBogies =
-                bogies.stream()
-                        .collect(Collectors.groupingBy(Bogie::getType));
-
-        // Step 3: Display grouped result
-        System.out.println("=== Grouped Bogies by Type ===");
-
-        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
-            System.out.println("\nType: " + entry.getKey());
-
-            for (Bogie bogie : entry.getValue()) {
-                System.out.println("  " + bogie.getDetails());
-            }
-        }
+        // 6. Program continues (Original list remains intact)
     }
 }
