@@ -58,6 +58,13 @@ class GoodsBogie extends Bogie {
 
 // Main Application
 public class TrainConsistManagementApp {
+    public static void main(String[] args) {
+        // 1. Create the initial list of bogies
+        List<Bogie> allBogies = new ArrayList<>();
+        allBogies.add(new Bogie("Sleeper", 72));
+        allBogies.add(new Bogie("AC Chair", 56));
+        allBogies.add(new Bogie("First Class", 24));
+        allBogies.add(new Bogie("General", 90));
 
     public static void main(String[] args) {
 
