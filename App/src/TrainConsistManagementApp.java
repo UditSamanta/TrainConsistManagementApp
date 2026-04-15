@@ -1,46 +1,43 @@
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
-class Bogie {
-    String type;
-    int capacity;
+public class TrainConsistManagementApp {
 
-    public Bogie(String type, int capacity) {
-        this.type = type;
-        this.capacity = capacity;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-}
-
-
-
-public class TrainConsistManagementApp{
     public static void main(String[] args) {
-        // 1. User creates a list of bogies (Reuse from previous UC)
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Sleeper", 72),
-                new Bogie("AC Chair Car", 56),
-                new Bogie("Sleeper", 72),
-                new Bogie("General", 90),
-                new Bogie("AC 2-Tier", 48)
-        );
+        // Sample Inputs
+        String trainIdInput = "TRN-1234";
+        String cargoCodeInput = "PET-AB";
 
-        // 2. System converts list into a stream
-        // 3. map() extracts capacity values
-        // 4. reduce() sums the capacities using 0 as identity and Integer::sum
-        int totalSeatingCapacity = bogies.stream()
-                .map(Bogie::getCapacity)
-                .reduce(0, Integer::sum);
+        // 1. Define Regex Patterns
+        // TRN- followed by exactly 4 digits
+        String trainIdRegex = "TRN-\\d{4}";
+        // PET- followed by exactly 2 uppercase letters
+        String cargoCodeRegex = "PET-[A-Z]{2}";
 
-        // 5. Total seating capacity is displayed
-        System.out.println("--- Train Seating Analytics ---");
-        System.out.println("Total Bogies: " + bogies.size());
-        System.out.println("Total Seating Capacity: " + totalSeatingCapacity);
-        System.out.println("-------------------------------");
+        // 2. Compile Patterns
+        Pattern trainPattern = Pattern.compile(trainIdRegex);
+        Pattern cargoPattern = Pattern.compile(cargoCodeRegex);
 
-        // 6. Program continues (Original list remains intact)
+        // 3. Create Matchers and Validate
+        validateInput("Train ID", trainIdInput, trainPattern);
+        validateInput("Cargo Code", cargoCodeInput, cargoPattern);
+
+        // Test with invalid data
+        System.out.println("\n--- Testing Invalid Inputs ---");
+        validateInput("Train ID", "TRN-123", trainPattern);    // Too short
+        validateInput("Cargo Code", "PET-ab", cargoPattern);   // Lowercase
+    }
+
+    /**
+     * Helper method to validate input and display results
+     */
+    public static void validateInput(String fieldName, String input, Pattern pattern) {
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            System.out.println("✔ " + fieldName + " [" + input + "]: Validation Successful.");
+        } else {
+            System.out.println("❌ " + fieldName + " [" + input + "]: Invalid Format!");
+        }
     }
 }
