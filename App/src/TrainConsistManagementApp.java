@@ -1,52 +1,55 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-class Bogie {
-    int capacity;
-    public Bogie(int capacity) { this.capacity = capacity; }
-    public int getCapacity() { return capacity; }
+// 1. Create a custom exception class
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
 }
 
-public class PerformanceComparison {
+class PassengerBogie {
+    private String type;
+    private int capacity;
+
+    // 2. Validate capacity inside the constructor
+    // 3. Declare constructor with throws declaration
+    public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            // 4. Throw the exception when business rules are violated
+            throw new InvalidCapacityException("Capacity must be greater than zero. Received: " + capacity);
+        }
+        this.type = type;
+        this.capacity = capacity;
+    }
+
+    public int getCapacity() { return capacity; }
+    public String getType() { return type; }
+}
+
+public class TrainSafetySystem {
     public static void main(String[] args) {
-        // 1. Prepare a large collection of bogies (100,000 items)
-        List<Bogie> bogies = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
-            bogies.add(new Bogie(i % 100)); // Capacities 0-99
+        System.out.println("--- Train Consistency Validation ---");
+
+        // Test Case 1: Valid Creation
+        try {
+            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+            System.out.println("✔ Bogie Created: " + b1.getType() + " (" + b1.getCapacity() + " seats)");
+        } catch (InvalidCapacityException e) {
+            System.out.println("❌ Error: " + e.getMessage());
         }
 
-        // --- LOOP-BASED FILTERING ---
-        long startLoop = System.nanoTime(); // Start Time
-        List<Bogie> loopResult = new ArrayList<>();
-        for (Bogie b : bogies) {
-            if (b.getCapacity() > 60) {
-                loopResult.add(b);
-            }
+        // Test Case 2: Invalid Creation (Zero Capacity)
+        try {
+            PassengerBogie b2 = new PassengerBogie("AC Chair Car", 0);
+        } catch (InvalidCapacityException e) {
+            System.out.println("❌ Caught Expected Exception: " + e.getMessage());
         }
-        long endLoop = System.nanoTime(); // End Time
-        long loopDuration = endLoop - startLoop;
 
-        // --- STREAM-BASED FILTERING ---
-        long startStream = System.nanoTime(); // Start Time
-        List<Bogie> streamResult = bogies.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
-        long endStream = System.nanoTime(); // End Time
-        long streamDuration = endStream - startStream;
-
-        // 6. Execution time is displayed
-        System.out.println("--- Performance Benchmark Results ---");
-        System.out.println("Dataset Size      : " + bogies.size() + " bogies");
-        System.out.println("Loop Duration     : " + loopDuration + " ns");
-        System.out.println("Stream Duration   : " + streamDuration + " ns");
-        System.out.println("Result Consistency: " + (loopResult.size() == streamResult.size()));
-        System.out.println("-------------------------------------");
-
-        if (loopDuration < streamDuration) {
-            System.out.println("Observation: Loop was faster by " + (streamDuration - loopDuration) + " ns");
-        } else {
-            System.out.println("Observation: Stream was faster by " + (loopDuration - streamDuration) + " ns");
+        // Test Case 3: Invalid Creation (Negative Capacity)
+        try {
+            PassengerBogie b3 = new PassengerBogie("General", -10);
+        } catch (InvalidCapacityException e) {
+            System.out.println("❌ Caught Expected Exception: " + e.getMessage());
         }
+
+        System.out.println("------------------------------------");
     }
 }
