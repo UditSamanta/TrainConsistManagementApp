@@ -1,55 +1,57 @@
-// 1. Create a custom exception class
-class InvalidCapacityException extends Exception {
-    public InvalidCapacityException(String message) {
+// 1. Create a custom runtime exception
+class CargoSafetyException extends RuntimeException {
+    public CargoSafetyException(String message) {
         super(message);
     }
 }
 
-class PassengerBogie {
-    private String type;
-    private int capacity;
+class GoodsBogie {
+    private String shape; // e.g., "Cylindrical" or "Rectangular"
+    private String currentCargo = "Empty";
 
-    // 2. Validate capacity inside the constructor
-    // 3. Declare constructor with throws declaration
-    public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
-        if (capacity <= 0) {
-            // 4. Throw the exception when business rules are violated
-            throw new InvalidCapacityException("Capacity must be greater than zero. Received: " + capacity);
-        }
-        this.type = type;
-        this.capacity = capacity;
+    public GoodsBogie(String shape) {
+        this.shape = shape;
     }
 
-    public int getCapacity() { return capacity; }
-    public String getType() { return type; }
+    // 2. Validate compatibility before assignment
+    public void assignCargo(String cargo) {
+        System.out.println("Attempting to assign [" + cargo + "] to [" + shape + "] bogie...");
+
+        // 3. Throw exception for unsafe combinations
+        if (cargo.equalsIgnoreCase("Petroleum") && shape.equalsIgnoreCase("Rectangular")) {
+            throw new CargoSafetyException("SAFETY VIOLATION: Petroleum cannot be carried in Rectangular bogies due to leak risks.");
+        }
+
+        this.currentCargo = cargo;
+        System.out.println("✔ Assignment Successful.");
+    }
+
+    public String getShape() { return shape; }
 }
 
-public class TrainSafetySystem {
+public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        System.out.println("--- Train Consistency Validation ---");
+        GoodsBogie rectangularBogie = new GoodsBogie("Rectangular");
+        GoodsBogie cylindricalBogie = new GoodsBogie("Cylindrical");
 
-        // Test Case 1: Valid Creation
+        // 4. Test logic using try-catch-finally
+        processCargo(cylindricalBogie, "Petroleum"); // Safe case
+        processCargo(rectangularBogie, "Petroleum"); // Unsafe case
+        processCargo(rectangularBogie, "Coal");      // Safe case
+
+        System.out.println("\n[System Status: Online] - Program continued safely.");
+    }
+
+    public static void processCargo(GoodsBogie bogie, String cargo) {
         try {
-            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
-            System.out.println("✔ Bogie Created: " + b1.getType() + " (" + b1.getCapacity() + " seats)");
-        } catch (InvalidCapacityException e) {
+            bogie.assignCargo(cargo);
+        } catch (CargoSafetyException e) {
+            // 5. Catch block handles the error and prevents crash
             System.out.println("❌ Error: " + e.getMessage());
+        } finally {
+            // 6. Finally block executes mandatory logging/cleanup
+            System.out.println("LOG: Cargo validation cycle completed for " + bogie.getShape() + " bogie.");
+            System.out.println("---------------------------------------------------------");
         }
-
-        // Test Case 2: Invalid Creation (Zero Capacity)
-        try {
-            PassengerBogie b2 = new PassengerBogie("AC Chair Car", 0);
-        } catch (InvalidCapacityException e) {
-            System.out.println("❌ Caught Expected Exception: " + e.getMessage());
-        }
-
-        // Test Case 3: Invalid Creation (Negative Capacity)
-        try {
-            PassengerBogie b3 = new PassengerBogie("General", -10);
-        } catch (InvalidCapacityException e) {
-            System.out.println("❌ Caught Expected Exception: " + e.getMessage());
-        }
-
-        System.out.println("------------------------------------");
     }
 }
