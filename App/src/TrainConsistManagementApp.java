@@ -2,38 +2,21 @@ import java.util.Arrays;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. User provides passenger bogie capacities
-        int[] capacities = {72, 56, 24, 70, 60};
+        // 1. User provides bogie type names
+        String[] bogieNames = {"Sleeper", "AC Chair", "First Class", "General", "Luxury"};
 
-        System.out.println("Original Capacities: " + Arrays.toString(capacities));
+        System.out.println("Original Order: " + Arrays.toString(bogieNames));
 
-        // 2. Bubble Sort Logic
-        bubbleSort(capacities);
+        // 2. System calls Arrays.sort() on the array
+        // 3. Java internally sorts the values (Natural Alphabetical Order)
+        Arrays.sort(bogieNames);
 
-        // 6. Sorted result is displayed
-        System.out.println("Sorted Capacities:   " + Arrays.toString(capacities));
-    }
+        // 4. Sorted bogie names are displayed
+        System.out.println("Sorted Order:   " + Arrays.toString(bogieNames));
 
-    /**
-     * Sorts an array using the Bubble Sort algorithm.
-     * Uses nested loops to compare and swap adjacent elements.
-     */
-    public static void bubbleSort(int[] arr) {
-        int n = arr.length;
-
-        // 3. System iterates through the array (Multiple passes)
-        for (int i = 0; i < n - 1; i++) {
-            // Last i elements are already in place, so we ignore them
-            for (int j = 0; j < n - i - 1; j++) {
-
-                // 4. Adjacent values are compared
-                if (arr[j] > arr[j + 1]) {
-                    // 5. If out of order, values are swapped
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
-            }
-        }
+        // 5. Program continues
+        System.out.println("\n--- Sorting Efficiency Note ---");
+        System.out.println("Algorithm: Dual-Pivot Quicksort / TimSort");
+        System.out.println("Complexity: O(n log n)");
     }
 }
