@@ -1,23 +1,62 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-// Reusing the Bogie class from UC7
-class Bogie {
-    String name;
-    int capacity;
+// Base Bogie Class
+abstract class Bogie {
+    private String id;
+    private String type;
 
-    public Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
+    public Bogie(String id, String type) {
+        this.id = id;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public abstract String getDetails();
+}
+
+// Passenger Bogie
+class PassengerBogie extends Bogie {
+    private int seatCapacity;
+
+    public PassengerBogie(String id, String type, int seatCapacity) {
+        super(id, type);
+        this.seatCapacity = seatCapacity;
     }
 
     @Override
-    public String toString() {
-        return name + " (" + capacity + " seats)";
+    public String getDetails() {
+        return "Passenger Bogie [ID=" + getId() +
+                ", Type=" + getType() +
+                ", Seats=" + seatCapacity + "]";
     }
 }
 
+// Goods Bogie
+class GoodsBogie extends Bogie {
+    private String cargoType;
+
+    public GoodsBogie(String id, String type, String cargoType) {
+        super(id, type);
+        this.cargoType = cargoType;
+    }
+
+    @Override
+    public String getDetails() {
+        return "Goods Bogie [ID=" + getId() +
+                ", Type=" + getType() +
+                ", Cargo=" + cargoType + "]";
+    }
+}
+
+// Main Application
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
         // 1. Create the initial list of bogies
@@ -27,24 +66,34 @@ public class TrainConsistManagementApp {
         allBogies.add(new Bogie("First Class", 24));
         allBogies.add(new Bogie("General", 90));
 
-        System.out.println("=== UC8: Filtering High-Capacity Bogies (Streams) ===");
-        System.out.println("Full Train Consist: " + allBogies);
+    public static void main(String[] args) {
 
-        // 2. Use Stream API to filter bogies with capacity > 60
-        // pipeline: source -> filter -> collect
-        List<Bogie> highCapacityBogies = allBogies.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
+        // Step 1: Create list of bogies
+        List<Bogie> bogies = new ArrayList<>();
 
-        // 3. Display the filtered results
-        System.out.println("\n--- High-Capacity Bogies (> 60 seats) ---");
-        highCapacityBogies.forEach(b -> System.out.println("Match found: " + b));
+        bogies.add(new PassengerBogie("P1", "Sleeper", 72));
+        bogies.add(new PassengerBogie("P2", "AC Chair", 50));
+        bogies.add(new PassengerBogie("P3", "First Class", 30));
+        bogies.add(new PassengerBogie("P4", "Sleeper", 72));
 
-        // 4. Example of a quick check: Counting filtered results
-        long count = allBogies.stream()
-                .filter(b -> b.capacity > 60)
-                .count();
+        bogies.add(new GoodsBogie("G1", "Cylindrical", "Oil"));
+        bogies.add(new GoodsBogie("G2", "Rectangular", "Coal"));
+        bogies.add(new GoodsBogie("G3", "Cylindrical", "Gas"));
 
-        System.out.println("\nTotal high-capacity coaches available: " + count);
+        // Step 2: Convert list into stream and group by type
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
+
+        // Step 3: Display grouped result
+        System.out.println("=== Grouped Bogies by Type ===");
+
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println("\nType: " + entry.getKey());
+
+            for (Bogie bogie : entry.getValue()) {
+                System.out.println("  " + bogie.getDetails());
+            }
+        }
     }
 }
