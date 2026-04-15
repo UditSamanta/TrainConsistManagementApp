@@ -2,47 +2,45 @@ import java.util.Arrays;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. User provides bogie IDs (may be unsorted initially)
-        String[] bogieIds = {"BG309", "BG101", "BG550", "BG205", "BG412"};
-        String searchKey = "BG412";
+        // Scenario 1: Searching an empty train consist
+        String[] emptyTrain = {};
+        try {
+            System.out.println("Attempting search on empty train...");
+            searchWithValidation(emptyTrain, "BG101");
+        } catch (IllegalStateException e) {
+            System.out.println("❌ Caught State Error: " + e.getMessage());
+        }
 
-        // Precondition: Binary search REQUIRES sorted data
-        Arrays.sort(bogieIds);
-        System.out.println("Sorted Bogie IDs: " + Arrays.toString(bogieIds));
+        System.out.println("------------------------------------");
 
-        // Perform Binary Search
-        int resultIndex = performBinarySearch(bogieIds, searchKey);
-
-        // Display Result
-        if (resultIndex != -1) {
-            System.out.println("✔ Bogie ID [" + searchKey + "] found at sorted index: " + resultIndex);
-        } else {
-            System.out.println("❌ Bogie ID [" + searchKey + "] not found.");
+        // Scenario 2: Searching a valid train consist
+        String[] activeTrain = {"BG101", "BG205", "BG309"};
+        try {
+            System.out.println("Attempting search on active train...");
+            boolean found = searchWithValidation(activeTrain, "BG205");
+            System.out.println("Result: Bogie " + (found ? "Found" : "Not Found"));
+        } catch (IllegalStateException e) {
+            System.out.println("❌ Error: " + e.getMessage());
         }
     }
 
-    public static int performBinarySearch(String[] arr, String target) {
-        // 3. Initialize low and high indexes
-        int low = 0;
-        int high = arr.length - 1;
+    /**
+     * Searches for a bogie ID but validates system state first.
+     * @throws IllegalStateException if the array is null or empty.
+     */
+    public static boolean searchWithValidation(String[] bogieIds, String target) {
+        // 1. System checks whether the bogie collection is empty
+        if (bogieIds == null || bogieIds.length == 0) {
+            // 2. If no bogies, throw IllegalStateException (Fail-Fast)
+            throw new IllegalStateException("Search operation failed: The train consist is empty.");
+        }
 
-        while (low <= high) {
-            // 4. Find the middle index
-            int mid = low + (high - low) / 2;
-
-            // 5. Compare key with middle value using compareTo()
-            int comparison = target.compareTo(arr[mid]);
-
-            if (comparison == 0) {
-                return mid; // Found!
-            } else if (comparison > 0) {
-                // 6. Target is in the upper half
-                low = mid + 1;
-            } else {
-                // 6. Target is in the lower half
-                high = mid - 1;
+        // 3. If validation passes, proceed with search logic
+        for (String id : bogieIds) {
+            if (id.equals(target)) {
+                return true;
             }
         }
-        return -1; // Exhausted range, not found
+        return false;
     }
 }
